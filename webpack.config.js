@@ -3,7 +3,7 @@
 const path = require('path');
 const FixStyleOnlyEntriesPlugin = require('webpack-fix-style-only-entries');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const BabelMultiTargetPlugin = require('webpack-babel-multi-target-plugin').BabelMultiTargetPlugin;
+//const BabelMultiTargetPlugin = require('webpack-babel-multi-target-plugin').BabelMultiTargetPlugin;
 const DartSass = require('sass');
 const PostcssImport = require('postcss-import');
 const PostcssPresetEnv = require('postcss-preset-env');
@@ -20,11 +20,35 @@ module.exports = () => {
     devtool: 'inline-source-map',
     module: {
       rules: [
+        // {
+        //   test: /\.js$/,
+        //   use: [
+        //     BabelMultiTargetPlugin.loader(),
+        //   ],
+        // },
+        // {
         {
-          test: /\.js$/,
-          use: [
-            BabelMultiTargetPlugin.loader(),
-          ],
+          test: /\.m?js$/,
+          exclude: /(node_modules)/,
+          use: {
+            loader: 'babel-loader',
+            options: {
+              cacheDirectory: true,
+              'presets': [
+                ['@babel/preset-env', {
+                  'useBuiltIns': 'usage',
+                  'corejs': '2',
+                  'targets': {
+                    'browsers': [
+                      'last 2 versions',
+                      'ie >= 11'
+                    ]
+                  }
+                }]
+              ],
+              plugins: ['@babel/plugin-syntax-dynamic-import']
+            }
+          }
         },
         {
           test: /\.(css|s[ac]ss)$/i,
@@ -90,31 +114,31 @@ module.exports = () => {
         filename: `[name].css`,
         chunkFilename: `chunks/[name].css`
       }),
-      new BabelMultiTargetPlugin({
-        babel: {
-          presetOptions: {
-            'corejs': '2',
-            'targets': {
-              'browsers': [
-                'last 2 versions',
-                'ie >= 11'
-              ]
-            },
-            'modules': false,
-            'useBuiltIns': 'usage'
-          }
-        },
-        exclude: [/node_modules/],
-        targets: {
-          modern: {
-            key: 'es6',
-            tagAssetsWithKey: true,
-          },
-          legacy: {
-            tagAssetsWithKey: false,
-          }
-        }
-      })
+      // new BabelMultiTargetPlugin({
+      //   babel: {
+      //     presetOptions: {
+      //       'corejs': '2',
+      //       'targets': {
+      //         'browsers': [
+      //           'last 2 versions',
+      //           'ie >= 11'
+      //         ]
+      //       },
+      //       'modules': false,
+      //       'useBuiltIns': 'usage'
+      //     }
+      //   },
+      //   exclude: [/node_modules/],
+      //   targets: {
+      //     modern: {
+      //       key: 'es6',
+      //       tagAssetsWithKey: true,
+      //     },
+      //     legacy: {
+      //       tagAssetsWithKey: false,
+      //     }
+      //   }
+      // })
     ]
   }
 };
