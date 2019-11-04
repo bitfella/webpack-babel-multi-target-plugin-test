@@ -1,5 +1,5 @@
-$font-color: 'red';
+$border-color: 'red';
 
 .tabs {
-  color: $font-color;
+  border: 5px solid $border-color;
 }
